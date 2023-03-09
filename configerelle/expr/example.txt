@@ -1,0 +1,1 @@
+word {some} with {foo::bar} is {foo::-{baz}-}
