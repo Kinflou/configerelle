@@ -13,12 +13,14 @@ items:
   - spoon
   - fork
 
-hold:
-  - '{cfg::items::#1}' # expression to refer to 'fork' in 'items'
+hold: '{cfg::items::#1}' # expression to refer to 'fork' in 'items'
 ```
 
 and making the configuration file and load like this:
 ```python
+from pathlib import Path
+from configerelle.configuration.base import ConfigBase
+
 class Person(ConfigBase):
     items: list[str]
     hold: str
