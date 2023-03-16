@@ -1,14 +1,12 @@
 # Standard Imports
-from typing import Type
-
-from antlr4 import TerminalNode, ParserRuleContext
 
 # Local Imports
 from configerelle.expr.generated.exprListener import exprListener
 from configerelle.expr.generated.exprParser import exprParser
+from configerelle.utils.navigator import Navigator
 
 # External Imports
-from flatdict import FlatDict
+from antlr4 import TerminalNode
 
 
 class ExprCombiner(exprListener):
@@ -16,159 +14,90 @@ class ExprCombiner(exprListener):
     def __init__(self):
         super().__init__()
 
-        self.current: str = 'root'
-        self.indexes: dict = {}
-        self.sections: FlatDict = FlatDict(delimiter='.')
-
-    def next_idx(self, new) -> str:
-        return self.current + '.' + new
-
-    def parent_idx(self, child: str | None = None) -> str:
-        if child:
-            parts = child.split('.')
-        else:
-            parts = self.current.split('.')
-
-        return '.'.join(parts[:-1])
-
-    def last_idx(self, rule: Type[ParserRuleContext]) -> int:
-        parent = self.parent_idx()
-        name = rule.__name__
-        val = self.sections[parent].get(name, None)
-
-        if not val:
-            return None
-
-        vals = self.sections[parent][name]
-
-        if not vals:
-            return None
-
-        return len(vals) - 1
-
-    def last(self, rule) -> FlatDict | None:
-        parent = self.parent_idx()
-        name = rule.__name__
-        val = self.sections[parent].get(name, None)
-
-        if not val:
-            return None
-
-        vals = self.sections[parent][name]
-
-        if not vals:
-            return None
-
-        return self.sections[parent][name][-1]
-
-    def parent(self):
-        return self.sections[self.parent_idx()]
+        self.sections: Navigator = Navigator(value={})
 
     def enterExpressions(self, ctx: exprParser.ExpressionsContext):
-        self.current = self.next_idx(exprParser.ExpressionsContext.__name__)
-        self.sections[self.current] = {
-            exprParser.ExpressionContext.__name__: []
-        }
+        self.sections.next(exprParser.ExpressionsContext.__name__)
+        self.sections.current_item = []
         ...
 
     def enterExpression(self, ctx: exprParser.ExpressionContext):
-        self.current = self.next_idx(exprParser.ExpressionContext.__name__)
-        self.sections[self.current].append({
-            'text': [],
+        self.sections.current_item.append({
+            'texts': [],
             exprParser.NamespaceContext.__name__: [],
             exprParser.Literal_namespaceContext.__name__: []
         })
-        self.current = f'{self.current}.{self.last_idx(exprParser.ExpressionContext)}'
+
+        self.sections.current_index = self.sections.last()
         ...
 
     def enterNamespace(self, ctx: exprParser.NamespaceContext):
-        self.current = self.next_idx(exprParser.NamespaceContext.__name__)
-        self.sections[self.current] = {
-            exprParser.SegmentContext: []
+        self.sections.next(exprParser.NamespaceContext.__name__)
+
+        self.sections.current_item = {
+            exprParser.SegmentsContext.__name__: []
         }
         ...
 
     def enterSegments(self, ctx: exprParser.SegmentsContext):
-        self.current = self.next_idx(exprParser.SegmentsContext.__name__)
-        self.sections[self.current] = {
-            exprParser.SegmentContext: [],
-            exprParser.SegmentsContext: []
-        }
-        ...
+        self.sections.next(exprParser.SegmentsContext.__name__)
 
-    def enterSegment(self, ctx: exprParser.SegmentContext):
-        self.current = self.next_idx(exprParser.SegmentContext.__name__)
-        self.sections[self.current] = {
-            'text': [],
-        }
+        self.sections.current_item.append({
+            'texts': [],
+            exprParser.Literal_namespaceContext.__name__: []
+        })
+
+        self.sections.current_index = self.sections.last()
         ...
 
     def enterLiteral_namespace(self, ctx: exprParser.Literal_namespaceContext):
-        self.sections[self.current] = {
-            'segments': [],
+        self.sections.next(exprParser.Literal_namespaceContext.__name__)
+
+        self.sections.current_item = {
+            exprParser.SegmentsContext.__name__: []
         }
-        self.current = self.next_idx(exprParser.Literal_namespaceContext.__name__)
+
         ...
 
     def exitExpressions(self, ctx: exprParser.ExpressionsContext):
-        self.current = self.parent_idx()
+        self.sections.back()
         ...
 
     def exitExpression(self, ctx: exprParser.ExpressionContext):
         texts = unite(ctx.TEXT())
-        namespaces = unite(ctx.namespace())
-        literal_namespaces = unite(ctx.literal_namespace())
+        # TODO: Whitespaces are disregarded by the parser, this is a temporary solution
+        #       which doesn't solve all cases of whitespace
+        # texts = [f'{t} ' for t in texts]
 
-        parent = self.parent_idx()
-        last = len(self.sections[parent]) - 1
-        self.sections[parent][last] = clean_values({
+        self.sections.current_item = clean_values({
             'texts': texts,
-            'namespaces': namespaces,
-            'literal_namespaces': literal_namespaces
+            exprParser.NamespaceContext.__name__:
+                self.sections.current_item[exprParser.NamespaceContext.__name__],
+
+            exprParser.Literal_namespaceContext.__name__:
+                self.sections.current_item[exprParser.Literal_namespaceContext.__name__],
         })
 
-        self.current = self.parent_idx()
-        ...
+        self.sections.back()
 
     def exitNamespace(self, ctx: exprParser.NamespaceContext):
-        segments = unite(ctx.segments())
-        self.sections[self.current] = clean_values({
-            'segments': segments
-        })
-
-        self.current = self.parent_idx()
+        self.sections.back().back()
         ...
 
     def exitSegments(self, ctx: exprParser.SegmentsContext):
-        return
+        texts = unite(ctx.SEGMENT_TEXT())
+        # literal_namespaces = unite(ctx.literal_namespace())
 
-        segments = unite(ctx.segment())
-        literal_namespaces = unite(ctx.literal_namespace())
-        self.sections[self.current].update({
-            'segments': segments,
-            'literal_namespaces': literal_namespaces
-        })
-
-        self.current = self.parent_idx()
-        ...
-
-    def exitSegment(self, ctx: exprParser.SegmentContext):
-        texts = unite(ctx.TEXT())
-        self.sections[self.current] = clean_values({
+        self.sections.current_item.update(clean_values({
             'texts': texts,
-        })
+            # 'literal_namespaces': literal_namespaces
+        }))
 
-        self.current = self.parent_idx()
+        self.sections.back()
         ...
 
     def exitLiteral_namespace(self, ctx: exprParser.Literal_namespaceContext):
-        segments = unite(ctx.segments())
-        self.sections[self.current] = clean_values({
-            'segments': segments,
-        })
-
-        self.current = self.parent_idx()
-        ...
+        self.sections.back().back()
 
 
 def unite(node: TerminalNode):
@@ -191,5 +120,4 @@ def clean_values(dct: dict):
             del new[k]
 
     return new
-
 

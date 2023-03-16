@@ -29,11 +29,6 @@ class exprVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by exprParser#segment.
-    def visitSegment(self, ctx:exprParser.SegmentContext):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by exprParser#literal_namespace.
     def visitLiteral_namespace(self, ctx:exprParser.Literal_namespaceContext):
         return self.visitChildren(ctx)
