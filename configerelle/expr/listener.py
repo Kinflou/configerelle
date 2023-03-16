@@ -65,10 +65,7 @@ class ExprCombiner(exprListener):
 
     def exitExpression(self, ctx: exprParser.ExpressionContext):
         texts = unite(ctx.TEXT())
-        # TODO: Whitespaces are disregarded by the parser, this is a temporary solution
-        #       which doesn't solve all cases of whitespace
-        # texts = [f'{t} ' for t in texts]
-
+        
         self.sections.current_item = clean_values({
             'texts': texts,
             exprParser.NamespaceContext.__name__:

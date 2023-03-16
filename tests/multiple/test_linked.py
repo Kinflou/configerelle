@@ -1,10 +1,10 @@
 # Standard Imports
 import unittest
 
-from tests.configuration.ali import Ali
 # Local Imports
 from tests.configuration.cass import Cass
 from tests.configuration.jess import Jess
+from tests.configuration.ali import Ali
 
 # External Imports
 
@@ -57,14 +57,12 @@ class LinkedTestCase(unittest.TestCase):
             items=['spoon'],
             quotes=[]
         )
-        jess.file_path = 'test/'
 
         cass = Cass(
             items=[],
             quotes=['i like Jess, they have a {linked::jess::items::#0}'],
             dreams=[]
         )
-        cass.file_path = 'test/'
         cass.add_vars_group({
             'pocket': {}
         })
@@ -77,5 +75,8 @@ class LinkedTestCase(unittest.TestCase):
         ali.link_config('cass', cass)
 
         with self.assertRaises(AttributeError):
-            self.assertEqual('i like Jess, they have a spoon', ali.expr_of(str, '{linked::cass::custom::pocket::#0}'))
+            self.assertEqual(
+                'i like Jess, they have a spoon',
+                ali.from_expr_of(str, '{linked::cass::custom::pocket::#0}')
+            )
 
