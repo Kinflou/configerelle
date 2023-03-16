@@ -13,6 +13,10 @@ class ConfigBase(ConfigBaseLogic):
     # __custom: dict[str, dict] = field(default_factory=dict)
     # __linked: dict[str, 'ConfigBase'] = field(default_factory=dict)
 
+    def __post_init__(self):
+        super().__post_init__()
+
     def self_dict(self) -> dict:
         return self.__dict__
+
 

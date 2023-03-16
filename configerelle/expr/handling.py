@@ -1,13 +1,12 @@
 # Standard Imports
-from antlr4 import CommonTokenStream, InputStream
 
 # Local Imports
 from configerelle.expr.generated.exprLexer import exprLexer
 from configerelle.expr.generated.exprParser import exprParser
 from configerelle.expr.listener import ExprCombiner
 
-
 # External Imports
+from antlr4 import CommonTokenStream, InputStream
 
 
 def navigate(expr: str):

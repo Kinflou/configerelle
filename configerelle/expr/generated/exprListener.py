@@ -44,15 +44,6 @@ class exprListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by exprParser#segment.
-    def enterSegment(self, ctx:exprParser.SegmentContext):
-        pass
-
-    # Exit a parse tree produced by exprParser#segment.
-    def exitSegment(self, ctx:exprParser.SegmentContext):
-        pass
-
-
     # Enter a parse tree produced by exprParser#literal_namespace.
     def enterLiteral_namespace(self, ctx:exprParser.Literal_namespaceContext):
         pass

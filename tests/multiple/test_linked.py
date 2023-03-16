@@ -26,8 +26,8 @@ class LinkedTestCase(unittest.TestCase):
         cass.file_path = 'test/'
         cass.link_config('jess', jess)
 
-        self.assertEqual(jess.__dict__, cass.var_of(dict, '{linked::jess}'))
-        self.assertEqual(jess.items[0], cass.var_of(dict, '{linked::jess}')['items'][0])
+        self.assertEqual(jess.__dict__, cass.from_expr_of(dict, '{linked::jess}'))
+        self.assertEqual(jess.items[0], cass.from_expr_of(dict, '{linked::jess}')['items'][0])
 
     def test_link_other_two_deep(self):
         jess = Jess(
@@ -50,7 +50,7 @@ class LinkedTestCase(unittest.TestCase):
         ali.link_config('jess', jess)
         ali.link_config('cass', cass)
 
-        self.assertEqual('i like Jess, they have a spoon', ali.expr_of(str, '{linked::cass::quotes::#0}'))
+        self.assertEqual('i like Jess, they have a spoon', ali.from_expr_of(str, '{linked::cass::quotes::#0}'))
 
     def test_link_other_two_deep_missing(self):
         jess = Jess(

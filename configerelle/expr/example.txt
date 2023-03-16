@@ -1,1 +1,4 @@
 word {some} with {foo::bar} is {foo::-{baz}-}
+
+word in {foo::#1}
+
