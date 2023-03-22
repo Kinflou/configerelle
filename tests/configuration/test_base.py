@@ -4,6 +4,8 @@ import unittest
 
 # Local Imports
 from configerelle.configuration.base import ConfigBase
+from configerelle.configuration.exceptions import SegmentNotFoundError
+
 
 # External Imports
 
@@ -30,7 +32,6 @@ class BaseTestCase(unittest.TestCase):
         }
 
         config = ConfigBase()
-        config.file_path = 'temp'
         config.add_vars_group(raw_dict)
 
         val: str = config.var_of(str, 'custom::test::foo')
@@ -40,11 +41,10 @@ class BaseTestCase(unittest.TestCase):
 
     def test_std_namespace_resolve(self):
         config = ConfigBase()
-        config.file_path = 'temp/'
         config.add_vars_group({
             'working_dir': os.getcwd()
         })
-        val: str = config.from_expr_of(str, '{custom::working_dir}/test/')
+        val: str = config.expr_of(str, '{custom::working_dir}/test/')
 
         expected: str = f"{os.getcwd()}/test/"
 
@@ -52,12 +52,11 @@ class BaseTestCase(unittest.TestCase):
 
     def test_std_namespace_resolve_missing(self):
         config = ConfigBase()
-        config.file_path = 'temp/'
         config.add_vars_group({
             'working_dir': os.getcwd()
         })
 
-        val: str = config.from_expr_of(str, '{custom::working_dir}/test/{std::doesnt_exist}')
+        val: str = config.expr_of(str, '{custom::working_dir}/test/{std::doesnt_exist}', False)
 
         expected: str = f"{os.getcwd()}/test/"
 
@@ -65,13 +64,12 @@ class BaseTestCase(unittest.TestCase):
 
     def test_std_namespace_resolve_missing_raises(self):
         config = ConfigBase()
-        config.file_path = 'temp/'
         config.add_vars_group({
             'working_dir': os.getcwd()
         })
 
-        with self.assertRaises(ValueError):
-            config.from_expr('{custom::working_dir}/test/{std::doesnt_exist}', True)
+        with self.assertRaises(SegmentNotFoundError):
+            config.expr('{custom::working_dir}/test/{std::doesnt_exist}', raise_lookup_fail=True)
 
 
 if __name__ == '__main__':

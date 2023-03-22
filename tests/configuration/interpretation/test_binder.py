@@ -19,7 +19,7 @@ class BinderTestCase(unittest.TestCase):
             }
         })
 
-        self.assertEqual('hello', config.from_expr_of(str, expression))
+        self.assertEqual('hello', config.expr_of(str, expression))
 
     def test_full_expr(self):
         expression = 'word {custom::some} with {custom::foo::bar} is {custom::foo::-{custom::baz}-}'
@@ -34,5 +34,5 @@ class BinderTestCase(unittest.TestCase):
             'baz': 'all'
         })
 
-        self.assertEqual('word spoon with fork is spoon fork', config.from_expr_of(str, expression))
+        self.assertEqual('word spoon with fork is spoon fork', config.expr_of(str, expression))
 

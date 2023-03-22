@@ -1,4 +1,5 @@
 # Standard Imports
+from antlr4.tree.Tree import TerminalNodeImpl
 
 # Local Imports
 from configerelle.expr.generated.exprListener import exprListener
@@ -25,7 +26,6 @@ class ExprCombiner(exprListener):
         self.sections.current_item.append({
             'texts': [],
             exprParser.NamespaceContext.__name__: [],
-            exprParser.Literal_namespaceContext.__name__: []
         })
 
         self.sections.current_index = self.sections.last()
@@ -53,10 +53,27 @@ class ExprCombiner(exprListener):
     def enterLiteral_namespace(self, ctx: exprParser.Literal_namespaceContext):
         self.sections.next(exprParser.Literal_namespaceContext.__name__)
 
-        self.sections.current_item = {
-            exprParser.SegmentsContext.__name__: []
-        }
+        positions = []
+        pos = 0
+        for idx in range(len(ctx.parentCtx.children)):
+            child = ctx.parentCtx.children[idx]
 
+            if isinstance(child, TerminalNodeImpl):
+                if child.getText() == '::':
+                    pos += 1
+
+            elif isinstance(child, exprParser.Literal_namespaceContext):
+                positions.append(pos)
+
+        self.sections.parent_item.update({
+            'positions': positions,
+        })
+
+        self.sections.current_item.append({
+            exprParser.SegmentsContext.__name__: []
+        })
+
+        self.sections.current_index = self.sections.last()
         ...
 
     def exitExpressions(self, ctx: exprParser.ExpressionsContext):
@@ -70,12 +87,10 @@ class ExprCombiner(exprListener):
             'texts': texts,
             exprParser.NamespaceContext.__name__:
                 self.sections.current_item[exprParser.NamespaceContext.__name__],
-
-            exprParser.Literal_namespaceContext.__name__:
-                self.sections.current_item[exprParser.Literal_namespaceContext.__name__],
         })
 
         self.sections.back()
+        ...
 
     def exitNamespace(self, ctx: exprParser.NamespaceContext):
         self.sections.back().back()
@@ -83,18 +98,17 @@ class ExprCombiner(exprListener):
 
     def exitSegments(self, ctx: exprParser.SegmentsContext):
         texts = unite(ctx.SEGMENT_TEXT())
-        # literal_namespaces = unite(ctx.literal_namespace())
 
         self.sections.current_item.update(clean_values({
             'texts': texts,
-            # 'literal_namespaces': literal_namespaces
         }))
 
         self.sections.back()
         ...
 
     def exitLiteral_namespace(self, ctx: exprParser.Literal_namespaceContext):
-        self.sections.back().back()
+        self.sections.back().back().back()
+        ...
 
 
 def unite(node: TerminalNode):

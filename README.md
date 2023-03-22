@@ -44,3 +44,8 @@ person.items[0]
 >>> fork
 ```
 
+
+## Mentions
+Thanks to [@Dylan-DPC](https://github.com/Dylan-DPC) for coming up with 
+the project name on a whim :dog:
+

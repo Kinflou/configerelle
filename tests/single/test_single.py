@@ -23,9 +23,8 @@ class SingleTestCase(unittest.TestCase):
             items=['keys', 'spoon'],
             quotes=['i brought something with me', 'i brought a {cfg::items::#1}']
         )
-        jess.file_path = 'temp/'
 
-        self.assertEqual('i brought a spoon', jess.from_expr_of(str, jess.quotes[1]))
+        self.assertEqual('i brought a spoon', jess.expr_of(str, jess.quotes[1]))
 
     @unittest.skip(reason='Possibly unnecessary feature')
     def test_expr_pointer_unresolved(self):
