@@ -48,7 +48,7 @@ class Navigator:
 
     @property
     def parent_item(self):
-        return self.__inner[self.parent_index]
+        return self[self.parent_index]
 
     def __init__(self, value, delimiter: chr = '.', index_raises: bool = True):
         super().__init__()

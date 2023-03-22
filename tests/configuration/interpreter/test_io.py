@@ -5,7 +5,6 @@ import unittest
 
 # External Imports
 from configerelle.configuration.logic import INTERPRETER
-from configerelle.expr.generated.exprParser import exprParser
 from configerelle.utils.navigator import Navigator
 from configerelle.configuration.base import ConfigBase
 from configerelle.configuration.interpretation.binder import Binder
@@ -14,42 +13,50 @@ from configerelle.configuration.interpretation.binder import Binder
 class InputOutputTestCase(unittest.TestCase):
 
     def test_input(self):
+        expr = "word {custom::come} with {custom::foo::bar} is {custom::foo::-{custom::baz}-}"
+        s = INTERPRETER().sections_from_expr(expr)
+
         sections = {
-            exprParser.ExpressionsContext.__name__: [
+            'ExpressionsContext': [
                 {'texts': ['word ']},
                 {
-                    exprParser.NamespaceContext.__name__: {
-                        exprParser.SegmentsContext.__name__: [
+                    'NamespaceContext': {
+                        'SegmentsContext': [
                             {
                                 'texts': ['custom', 'some'],
-                                exprParser.Literal_namespaceContext.__name__: []
+                                'Literal_namespaceContext': []
                             }
                         ]
                     }
                 },
                 {'texts': [' with ']},
                 {
-                    exprParser.NamespaceContext.__name__: {
-                        exprParser.SegmentsContext.__name__: [
-                            {
-                                'texts': ['custom', 'foo', 'bar'],
-                                exprParser.Literal_namespaceContext.__name__: []}]}
+                    'NamespaceContext': {
+                        'SegmentsContext': [
+                        {
+                            'texts': ['custom', 'foo', 'bar'],
+                            'Literal_namespaceContext': []}
+                        ]
+                    }
                 },
                 {'texts': [' is ']},
                 {
-                    exprParser.NamespaceContext.__name__: {
-                        exprParser.SegmentsContext.__name__: [
+                    'NamespaceContext': {
+                        'SegmentsContext': [
                             {
                                 'texts': ['custom', 'foo'],
-                                exprParser.Literal_namespaceContext.__name__: {
-                                    exprParser.SegmentsContext.__name__: [
-                                        {
-                                            'texts': ['custom', 'baz'],
-                                            exprParser.Literal_namespaceContext.__name__: []
-                                        }
-                                    ]
-                                }
-                             }
+                                'Literal_namespaceContext': [
+                                    {
+                                        'SegmentsContext': [
+                                            {
+                                                'texts': ['custom', 'baz'],
+                                                'Literal_namespaceContext': []
+                                            }
+                                        ]
+                                    }
+                                ],
+                                'positions': [2]
+                            }
                         ]
                     }
                 }

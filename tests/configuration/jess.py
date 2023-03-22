@@ -1,6 +1,5 @@
 # Standard Imports
-from dataclasses import dataclass
-from pathlib import Path
+from dataclasses import dataclass, field
 
 # Local Imports
 
@@ -12,4 +11,6 @@ from configerelle.configuration.base import ConfigBase
 class Jess(ConfigBase):
     quotes: list[str]
     items: list[str]
+    dreams: dict = field(default_factory=dict)
+    missing: list[str] = field(default_factory=list)
 

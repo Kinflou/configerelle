@@ -10,19 +10,18 @@ else:
 
 def serializedATN():
     return [
-        4,1,7,41,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,1,0,5,0,12,8,0,
-        10,0,12,0,15,9,0,1,1,1,1,1,1,3,1,20,8,1,1,2,1,2,1,2,1,2,1,3,1,3,
-        1,3,1,3,3,3,30,8,3,5,3,32,8,3,10,3,12,3,35,9,3,1,4,1,4,1,4,1,4,1,
-        4,0,0,5,0,2,4,6,8,0,0,40,0,13,1,0,0,0,2,19,1,0,0,0,4,21,1,0,0,0,
-        6,25,1,0,0,0,8,36,1,0,0,0,10,12,3,2,1,0,11,10,1,0,0,0,12,15,1,0,
-        0,0,13,11,1,0,0,0,13,14,1,0,0,0,14,1,1,0,0,0,15,13,1,0,0,0,16,20,
-        5,7,0,0,17,20,3,4,2,0,18,20,3,8,4,0,19,16,1,0,0,0,19,17,1,0,0,0,
-        19,18,1,0,0,0,20,3,1,0,0,0,21,22,5,2,0,0,22,23,3,6,3,0,23,24,5,3,
-        0,0,24,5,1,0,0,0,25,33,5,6,0,0,26,29,5,1,0,0,27,30,5,6,0,0,28,30,
-        3,8,4,0,29,27,1,0,0,0,29,28,1,0,0,0,30,32,1,0,0,0,31,26,1,0,0,0,
-        32,35,1,0,0,0,33,31,1,0,0,0,33,34,1,0,0,0,34,7,1,0,0,0,35,33,1,0,
-        0,0,36,37,5,4,0,0,37,38,3,6,3,0,38,39,5,5,0,0,39,9,1,0,0,0,4,13,
-        19,29,33
+        4,1,7,40,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,1,0,5,0,12,8,0,
+        10,0,12,0,15,9,0,1,1,1,1,3,1,19,8,1,1,2,1,2,1,2,1,2,1,3,1,3,1,3,
+        1,3,3,3,29,8,3,5,3,31,8,3,10,3,12,3,34,9,3,1,4,1,4,1,4,1,4,1,4,0,
+        0,5,0,2,4,6,8,0,0,38,0,13,1,0,0,0,2,18,1,0,0,0,4,20,1,0,0,0,6,24,
+        1,0,0,0,8,35,1,0,0,0,10,12,3,2,1,0,11,10,1,0,0,0,12,15,1,0,0,0,13,
+        11,1,0,0,0,13,14,1,0,0,0,14,1,1,0,0,0,15,13,1,0,0,0,16,19,5,7,0,
+        0,17,19,3,4,2,0,18,16,1,0,0,0,18,17,1,0,0,0,19,3,1,0,0,0,20,21,5,
+        2,0,0,21,22,3,6,3,0,22,23,5,3,0,0,23,5,1,0,0,0,24,32,5,6,0,0,25,
+        28,5,1,0,0,26,29,5,6,0,0,27,29,3,8,4,0,28,26,1,0,0,0,28,27,1,0,0,
+        0,29,31,1,0,0,0,30,25,1,0,0,0,31,34,1,0,0,0,32,30,1,0,0,0,32,33,
+        1,0,0,0,33,7,1,0,0,0,34,32,1,0,0,0,35,36,5,4,0,0,36,37,3,6,3,0,37,
+        38,5,5,0,0,38,9,1,0,0,0,4,13,18,28,32
     ]
 
 class exprParser ( Parser ):
@@ -111,7 +110,7 @@ class exprParser ( Parser ):
             self.state = 13
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            while ((_la) & ~0x3f) == 0 and ((1 << _la) & 148) != 0:
+            while _la==2 or _la==7:
                 self.state = 10
                 self.expression()
                 self.state = 15
@@ -141,10 +140,6 @@ class exprParser ( Parser ):
             return self.getTypedRuleContext(exprParser.NamespaceContext,0)
 
 
-        def literal_namespace(self):
-            return self.getTypedRuleContext(exprParser.Literal_namespaceContext,0)
-
-
         def getRuleIndex(self):
             return exprParser.RULE_expression
 
@@ -170,7 +165,7 @@ class exprParser ( Parser ):
         localctx = exprParser.ExpressionContext(self, self._ctx, self.state)
         self.enterRule(localctx, 2, self.RULE_expression)
         try:
-            self.state = 19
+            self.state = 18
             self._errHandler.sync(self)
             token = self._input.LA(1)
             if token in [7]:
@@ -182,11 +177,6 @@ class exprParser ( Parser ):
                 self.enterOuterAlt(localctx, 2)
                 self.state = 17
                 self.namespace()
-                pass
-            elif token in [4]:
-                self.enterOuterAlt(localctx, 3)
-                self.state = 18
-                self.literal_namespace()
                 pass
             else:
                 raise NoViableAltException(self)
@@ -243,11 +233,11 @@ class exprParser ( Parser ):
         self.enterRule(localctx, 4, self.RULE_namespace)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 21
+            self.state = 20
             self.match(exprParser.LCB)
-            self.state = 22
+            self.state = 21
             self.segments()
-            self.state = 23
+            self.state = 22
             self.match(exprParser.RCB)
         except RecognitionException as re:
             localctx.exception = re
@@ -305,29 +295,29 @@ class exprParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 25
+            self.state = 24
             self.match(exprParser.SEGMENT_TEXT)
-            self.state = 33
+            self.state = 32
             self._errHandler.sync(self)
             _la = self._input.LA(1)
             while _la==1:
-                self.state = 26
+                self.state = 25
                 self.match(exprParser.T__0)
-                self.state = 29
+                self.state = 28
                 self._errHandler.sync(self)
                 token = self._input.LA(1)
                 if token in [6]:
-                    self.state = 27
+                    self.state = 26
                     self.match(exprParser.SEGMENT_TEXT)
                     pass
                 elif token in [4]:
-                    self.state = 28
+                    self.state = 27
                     self.literal_namespace()
                     pass
                 else:
                     raise NoViableAltException(self)
 
-                self.state = 35
+                self.state = 34
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
 
@@ -383,11 +373,11 @@ class exprParser ( Parser ):
         self.enterRule(localctx, 8, self.RULE_literal_namespace)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 36
+            self.state = 35
             self.match(exprParser.LLCB)
-            self.state = 37
+            self.state = 36
             self.segments()
-            self.state = 38
+            self.state = 37
             self.match(exprParser.LRCB)
         except RecognitionException as re:
             localctx.exception = re

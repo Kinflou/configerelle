@@ -1,5 +1,5 @@
 # Standard Imports
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 # Local Imports
 
@@ -11,4 +11,5 @@ from configerelle.configuration.base import ConfigBase
 class Cass(ConfigBase):
     quotes: list[str]
     items: list[str]
-    dreams: list[str]
+    dreams: list[str] = field(default_factory=list)
+

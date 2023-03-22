@@ -7,7 +7,7 @@ grammar expr;
 expressions: expression* ;
 
 // TODO: Move the 'TEXT' rule to expressions, just like described above
-expression: TEXT | namespace | literal_namespace ;
+expression: TEXT | namespace ;
 // expression: namespace | literal_namespace ;
 
 namespace: LCB segments RCB;

@@ -42,4 +42,7 @@ def from_yaml(kind, content: str, path: Path):
         lambda d, t: d
     )
 
-    return cattrs.structure(content_dct, kind)
+    instance = cattrs.structure(content_dct, kind)
+    instance.__post_init__()
+
+    return instance
