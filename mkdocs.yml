@@ -1,0 +1,12 @@
+site_name: Configerelle
+# site_url: https://thing.com
+
+nav:
+    - Home: index.md
+    - About: about.md
+
+# theme: readthedocs
+
+plugins:
+  - mkdocstrings:
+

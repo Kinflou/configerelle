@@ -136,7 +136,7 @@ class Binder:
                 if len(routed) < 1:
                     break
 
-                if routed[0] not in self.config.live_keywords:
+                if routed[0] not in self.config.reserved_keywords:
                     routed.insert(0, 'cfg')
 
                 inner = inner.binder().var(routed)
@@ -158,11 +158,11 @@ class Binder:
         ...
 
     def from_expr_of(self, kind, expr_sections: dict, raise_lookup_fail: bool = True, **kwargs):
-        parts = self.from_inner(expr_sections, raise_lookup_fail)
+        parts = self.from_inner(expr_sections, raise_lookup_fail, **kwargs)
         return expr_of_kind(kind, parts)
 
     def from_expr(self, expr_sections: dict, raise_lookup_fail: bool = True, **kwargs):
-        parts = self.from_inner(expr_sections, raise_lookup_fail)
+        parts = self.from_inner(expr_sections, raise_lookup_fail, **kwargs)
         return parts
 
     def from_inner(self, inner: dict, raise_lookup_fail: bool = True, **kwargs) -> list:
@@ -202,7 +202,7 @@ class Binder:
 
                                 segments = ordered
 
-                        var = self.var(segments, raise_lookup_fail=raise_lookup_fail)
+                        var = self.var(segments, raise_lookup_fail=raise_lookup_fail, **kwargs)
 
                         # TODO: Be sure that ignoring null is the correct choice of flow
                         if var:
