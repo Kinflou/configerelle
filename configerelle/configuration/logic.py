@@ -51,8 +51,8 @@ class ConfigBaseLogic:
 
         return shallow
 
-    live_keywords: list[str] = [
-        'std', 'cfg', 'file', 'custom', 'linked'
+    reserved_keywords: list[str] = [
+        'std', 'cfg', 'file', 'custom', 'linked', 'self', 'super', 'local'
     ]
 
     def live_vars(self) -> dict:
@@ -60,13 +60,15 @@ class ConfigBaseLogic:
             'std': {
                 'system': platform.system().lower()
             },
-            'cfg': self.self_dict(),
             'file': {
                 'path': getattr(self, 'file_path', None),
                 'dir': self.file_dir()
             },
+            'cfg': self.self_dict(),
+            'self': None,
+            'super': None,
             'custom': self.__custom,
-            'linked': self.linked_vars()
+            'linked': self.linked_vars(),
         }
 
     def linked_vars(self) -> dict[str, Callable[[], dict]]:
@@ -83,6 +85,11 @@ class ConfigBaseLogic:
     def add_vars_group(self, group: dict):
         self.__custom.update(group)
 
+    # TODO: These functions are supposed to only search for a expression namespace variables
+    #       with local namespaces, as for example entering the rule 'expression' as entry-point on ANtlr expr grammar
+    #       instead of the 'root' rule.
+    #       Decide is these functions are necessary in the first place
+    """
     def var(self, points: str, default: str | list | dict | None = None, **kwargs) -> str | list | dict | None:
         sections = INTERPRETER().sections_from_expr(points)
 
@@ -90,10 +97,11 @@ class ConfigBaseLogic:
 
     def var_of(self, kind, expr: str, raise_lookup_fail: bool = True, **kwargs):
         pass
+    """
 
     def expr(self, expr: str, raise_lookup_fail: bool = True, **kwargs):
         sections = INTERPRETER().sections_from_expr(expr)
-        return self.__binder.from_expr(sections.inner, raise_lookup_fail)
+        return self.__binder.from_expr(sections.inner, raise_lookup_fail, **kwargs)
 
     def expr_of(self, kind, expr: str, raise_lookup_fail: bool = True, **kwargs):
         sections = INTERPRETER().sections_from_expr(expr)
