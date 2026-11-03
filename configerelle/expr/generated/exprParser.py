@@ -1,4 +1,4 @@
-# Generated from /home/jibunta/PycharmProjects/configerelle/configerelle/expr/expr.g4 by ANTLR 4.11.1
+# Generated from configerelle/expr/expr.g4 by ANTLR 4.11.1
 # encoding: utf-8
 from antlr4 import *
 from io import StringIO
